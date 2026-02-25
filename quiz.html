@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Quiz — SGEQUIZLAB</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0e0f0e;--s:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--b:rgba(255,255,255,.08);--e:#10d9a0;--ed:#0a9e75;--g:#f0c040;--gd:#b8923a;--t:#e8ece8;--tm:#7a8a7a;--td:#4a584a;--d:#e05555;--r:16px;--rs:8px;--fd:'Cinzel',serif;--fb:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:var(--fb);font-weight:300;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ed);border-radius:3px}
+
+header{position:sticky;top:0;z-index:50;background:rgba(14,15,14,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--b);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--fd);font-size:.9rem;letter-spacing:.12em;color:var(--g);text-decoration:none}.logo span{color:var(--e)}
+.hqt{font-size:.78rem;color:var(--tm);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbw{position:sticky;top:60px;z-index:40;height:3px;background:rgba(255,255,255,.04)}
+.pb{height:100%;background:linear-gradient(90deg,var(--e),var(--g));transition:width .4s;width:0%}
+
+main{max-width:720px;margin:0 auto;padding:32px 16px 80px}
+.scr{display:none}.scr.active{display:block}
+.spin{display:inline-block;border-radius:50%;animation:spin .8s linear infinite}
+.spin-sm{width:13px;height:13px;border:2px solid rgba(255,255,255,.1);border-top-color:currentColor}
+.spin-lg{width:30px;height:30px;border:3px solid rgba(16,217,160,.12);border-top-color:var(--e)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAME SCREEN */
+.nc{background:var(--s);border:1px solid var(--b);border-radius:20px;padding:36px 28px;position:relative;overflow:hidden;max-width:420px;margin:48px auto 0}
+.nc::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--e),transparent)}
+.nbadge{display:inline-flex;align-items:center;gap:7px;background:rgba(16,217,160,.07);border:1px solid rgba(16,217,160,.14);border-radius:100px;padding:4px 12px;font-size:.68rem;color:var(--e);letter-spacing:.1em;text-transform:uppercase;margin-bottom:13px}
+.nqt{font-family:var(--fd);font-size:1.2rem;font-weight:600;letter-spacing:.04em;margin-bottom:5px;line-height:1.3}
+.nm{color:var(--tm);font-size:.8rem;margin-bottom:22px}
+label{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tm);margin-bottom:6px;font-weight:500}
+input[type=text]{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:var(--rs);padding:12px 13px;color:var(--t);font-family:var(--fb);font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:15px}
+input:focus{border-color:rgba(16,217,160,.3);box-shadow:0 0 0 3px rgba(16,217,160,.07)}
+.btn-start{width:100%;background:linear-gradient(135deg,var(--e),var(--ed));color:#06150f;border:none;border-radius:var(--rs);padding:13px;font-family:var(--fb);font-size:.9rem;font-weight:500;cursor:pointer;transition:box-shadow .2s,transform .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-start:hover{box-shadow:0 0 30px rgba(16,217,160,.3);transform:translateY(-1px)}
+
+/* SCORE BANNER — shown after submit */
+#score-banner{display:none;background:var(--s2);border:1px solid var(--b);border-radius:var(--r);padding:24px;margin-bottom:24px;text-align:center;animation:fu .4s ease}
+#score-banner.show{display:block}
+.sb-pct{font-family:var(--fd);font-size:3rem;font-weight:900;line-height:1;margin-bottom:4px}
+.sb-pct.hi{color:var(--e)}.sb-pct.mi{color:var(--g)}.sb-pct.lo{color:var(--d)}
+.sb-frac{font-size:.9rem;color:var(--tm);margin-bottom:10px}
+.sb-msg{font-size:.85rem;color:var(--t);margin-bottom:18px}
+.sb-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--s);border:1px solid var(--b);border-radius:100px;padding:4px 13px;font-size:.74rem;color:var(--tm)}
+.chip.e{border-color:rgba(16,217,160,.3);color:var(--e)}.chip.d{border-color:rgba(224,85,85,.3);color:var(--d)}
+.sb-acts{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.bto{display:inline-flex;align-items:center;gap:6px;background:var(--s);color:var(--tm);border:1px solid var(--b);border-radius:var(--rs);padding:8px 16px;font-family:var(--fb);font-size:.8rem;text-decoration:none;cursor:pointer;transition:all .2s}
+.bto:hover{background:var(--s2);color:var(--t)}
+.bto.primary{background:linear-gradient(135deg,var(--e),var(--ed));color:#06150f;border:none}
+
+/* QUIZ SCREEN */
+.qh{margin-bottom:24px}
+.qpt{font-family:var(--fd);font-size:1.1rem;letter-spacing:.04em;margin-bottom:3px}
+.qsg{font-size:.8rem;color:var(--tm)}.qsg span{color:var(--e)}
+
+/* QUESTION CARDS */
+.qc{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:22px;margin-bottom:13px;animation:fu .35s ease both;transition:border-color .3s}
+.qc.all-correct{border-color:rgba(16,217,160,.3)}
+.qc.has-wrong{border-color:rgba(224,85,85,.2)}
+.qn{font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--e);margin-bottom:7px;font-weight:500}
+.qt{font-size:.93rem;line-height:1.65;margin-bottom:17px}
+.opts{display:flex;flex-direction:column;gap:7px}
+
+/* OPTION LABELS */
+.ol{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1px solid var(--b);border-radius:var(--rs);cursor:pointer;transition:all .2s;user-select:none;position:relative}
+.ol:hover:not(.dis){border-color:rgba(16,217,160,.3);background:rgba(16,217,160,.04)}
+.ol.sel{border-color:rgba(16,217,160,.45);background:rgba(16,217,160,.06)}
+.ol.dis{cursor:default;pointer-events:none}
+
+/* CORRECT = green background + border */
+.ol.cor{
+  border-color:rgba(16,217,160,.6) !important;
+  background:rgba(16,217,160,.1) !important;
+}
+/* WRONG = red background + border */
+.ol.inc{
+  border-color:rgba(224,85,85,.6) !important;
+  background:rgba(224,85,85,.1) !important;
+}
+
+.ol input[type=radio]{display:none}
+.od{width:16px;height:16px;border-radius:50%;border:2px solid var(--b);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;transition:all .2s}
+.ol.sel .od{border-color:var(--e);background:var(--e);color:#06150f}.ol.sel .od::after{content:'●';font-size:6px}
+.ol.cor .od{border-color:var(--e);background:var(--e);color:#06150f}.ol.cor .od::after{content:'✓'}
+.ol.inc .od{border-color:var(--d);background:var(--d);color:#fff}.ol.inc .od::after{content:'✗'}
+.ok{font-size:.66rem;letter-spacing:.06em;color:var(--tm);text-transform:uppercase;font-weight:500;min-width:13px}
+.ot{font-size:.86rem;flex:1;line-height:1.5}
+.tag{font-size:.65rem;padding:2px 8px;border-radius:100px;font-weight:600;margin-left:auto;flex-shrink:0;white-space:nowrap}
+.tag.c{background:rgba(16,217,160,.2);color:var(--e)}.tag.w{background:rgba(224,85,85,.2);color:var(--d)}.tag.m{background:rgba(240,192,64,.15);color:var(--g)}
+
+/* EXPLANATION */
+.eb{margin-top:11px;background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.12);border-radius:var(--rs);padding:11px 12px;display:none}
+.eb.show{display:block;animation:fu .3s ease}
+.el{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--g);font-weight:500;margin-bottom:4px}
+.et{font-size:.8rem;color:var(--tm);line-height:1.65}
+
+/* SUBMIT BAR */
+.sa{margin-top:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-sub{background:linear-gradient(135deg,var(--g),var(--gd));color:#0a0800;border:none;border-radius:var(--rs);padding:12px 28px;font-family:var(--fb);font-size:.9rem;font-weight:500;cursor:pointer;transition:box-shadow .2s,transform .2s;display:flex;align-items:center;gap:8px}
+.btn-sub:hover{box-shadow:0 0 28px rgba(240,192,64,.3);transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.sn{font-size:.72rem;color:var(--td)}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">SGE<span>QUIZ</span>LAB</a>
+  <div class="hqt" id="hqt">Loading…</div>
+</header>
+<div class="pbw"><div class="pb" id="pb"></div></div>
+
+<main>
+  <!-- LOADING -->
+  <div class="scr active" id="scr-load" style="text-align:center;padding:100px 0">
+    <div class="spin spin-lg"></div>
+    <p style="color:var(--tm);margin-top:14px;font-size:.85rem">Loading quiz…</p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="scr" id="scr-err" style="text-align:center;padding:80px 20px">
+    <div style="font-size:2.5rem;margin-bottom:12px;opacity:.4">🚫</div>
+    <div style="font-family:var(--fd);font-size:1.2rem;color:var(--d);margin-bottom:8px">Quiz Not Found</div>
+    <div id="errmsg" style="color:var(--tm);font-size:.84rem;margin-bottom:20px">This quiz does not exist or has been removed.</div>
+    <a href="index.html" class="btn-start" style="max-width:180px;margin:0 auto">← Home</a>
+  </div>
+
+  <!-- NAME ENTRY -->
+  <div class="scr" id="scr-name">
+    <div class="nc">
+      <div class="nbadge">✦ Live Quiz</div>
+      <div class="nqt" id="nqt">Loading…</div>
+      <div class="nm" id="nmeta"></div>
+      <label>Your Full Name</label>
+      <input type="text" id="sname" placeholder="Enter your name" maxlength="60"/>
+      <button class="btn-start" onclick="startQuiz()">Begin Quiz →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="scr" id="scr-quiz">
+    <!-- Score banner (hidden until submit) -->
+    <div id="score-banner">
+      <div class="sb-pct" id="sb-pct">0%</div>
+      <div class="sb-frac" id="sb-frac">0 / 0 correct</div>
+      <div class="sb-msg" id="sb-msg"></div>
+      <div class="sb-chips">
+        <div class="chip e" id="sb-cor">✓ 0 Correct</div>
+        <div class="chip d" id="sb-wrg">✗ 0 Wrong</div>
+      </div>
+      <div class="sb-acts">
+        <a href="#" id="lb-link" class="bto primary">🏆 View Leaderboard</a>
+        <a href="index.html" class="bto">🏠 Home</a>
+      </div>
+    </div>
+
+    <div class="qh">
+      <div class="qpt" id="qpt"></div>
+      <div class="qsg">Good luck, <span id="gname"></span></div>
+    </div>
+
+    <div id="qcont"></div>
+
+    <div class="sa" id="submit-bar">
+      <button class="btn-sub" id="subbtn" onclick="submitQuiz()">Submit Answers →</button>
+      <div class="sn">All answers are final after submission.</div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { db } from './firebase.js';
+import { doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+let quiz = null, qid = null, sname = '', ans = {}, submitted = false;
+
+// ── LOAD ──────────────────────────────────────────────────────
+(async () => {
+  qid = new URLSearchParams(location.search).get('id');
+  if (!qid) { showErr('No quiz ID in URL.'); return; }
+  try {
+    const snap = await getDoc(doc(db, 'quizzes', qid));
+    if (!snap.exists()) { showErr('Quiz not found.'); return; }
+    quiz = { id: snap.id, ...snap.data() };
+
+    // Normalise answer key — handle any field name
+    quiz.questions = quiz.questions.map(q => ({
+      ...q,
+      answerKey: String(q.answerKey || q.answer || q.correctAnswer || '').toUpperCase()
+    }));
+
+    document.title = quiz.title + ' — SGEQUIZLAB';
+    document.getElementById('hqt').textContent  = quiz.title;
+    document.getElementById('nqt').textContent  = quiz.title;
+    document.getElementById('nmeta').textContent = quiz.questions.length + ' questions · MCQ';
+    show('name');
+    document.getElementById('sname').focus();
+  } catch(e) {
+    showErr('Failed to load: ' + e.message);
+  }
+})();
+
+document.getElementById('sname').addEventListener('keydown', e => { if (e.key === 'Enter') window.startQuiz(); });
+
+// ── START ─────────────────────────────────────────────────────
+window.startQuiz = () => {
+  const n = document.getElementById('sname').value.trim();
+  if (!n) { document.getElementById('sname').style.borderColor = 'var(--d)'; return; }
+  sname = n;
+  document.getElementById('gname').textContent = n;
+  document.getElementById('qpt').textContent   = quiz.title;
+  renderQ();
+  show('quiz');
+};
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderQ() {
+  const c = document.getElementById('qcont');
+  c.innerHTML = '';
+  quiz.questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'qc';
+    card.id = 'qcard' + i;
+    card.style.animationDelay = (i * 0.05) + 's';
+
+    const opts = Object.entries(q.options).map(([k, v]) =>
+      `<label class="ol" id="op${i}${k}" onclick="selOpt(${i},'${k}')">
+        <input type="radio" name="q${i}"/>
+        <span class="od"></span>
+        <span class="ok">${k}</span>
+        <span class="ot">${esc(v)}</span>
+      </label>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="qn">Question ${i + 1} of ${quiz.questions.length}</div>
+      <div class="qt">${esc(q.question)}</div>
+      <div class="opts" id="opts${i}">${opts}</div>
+      <div class="eb" id="ex${i}">
+        <div class="el">Explanation</div>
+        <div class="et">${esc(q.explanation || '')}</div>
+      </div>`;
+    c.appendChild(card);
+  });
+  updateProgress();
+}
+
+window.selOpt = (i, k) => {
+  if (submitted) return;
+  ans[i] = k;
+  Object.keys(quiz.questions[i].options).forEach(ok =>
+    document.getElementById('op' + i + ok).classList.toggle('sel', ok === k)
+  );
+  updateProgress();
+};
+
+function updateProgress() {
+  const answered = Object.keys(ans).length;
+  const total    = quiz.questions.length;
+  document.getElementById('pb').style.width = ((answered / total) * 100) + '%';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+window.submitQuiz = async () => {
+  const unanswered = quiz.questions.length - Object.keys(ans).length;
+  if (unanswered > 0) {
+    if (!confirm(unanswered + ' question(s) unanswered. Submit anyway?')) return;
+  }
+
+  submitted = true;
+  const btn = document.getElementById('subbtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin spin-sm"></span> Marking…';
+
+  // Count score
+  let correct = 0;
+  quiz.questions.forEach((q, i) => {
+    if ((ans[i] || '') === q.answerKey) correct++;
+  });
+  const total = quiz.questions.length;
+  const pct   = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  // Highlight every question inline
+  quiz.questions.forEach((q, i) => {
+    const correctKey = q.answerKey;
+    const studentKey = ans[i] || '';
+    const card = document.getElementById('qcard' + i);
+
+    Object.keys(q.options).forEach(k => {
+      const el = document.getElementById('op' + i + k);
+      if (!el) return;
+      el.classList.remove('sel');
+      el.classList.add('dis');
+
+      if (k === correctKey && k === studentKey) {
+        // Student picked correct answer
+        el.classList.add('cor');
+        const tag = document.createElement('span');
+        tag.className = 'tag c'; tag.textContent = '✓ Your Answer'; el.appendChild(tag);
+      } else if (k === correctKey) {
+        // This is the correct answer (student didn't pick it)
+        el.classList.add('cor');
+        const tag = document.createElement('span');
+        tag.className = 'tag m'; tag.textContent = '✓ Correct Answer'; el.appendChild(tag);
+      } else if (k === studentKey) {
+        // Student picked this but it's wrong
+        el.classList.add('inc');
+        const tag = document.createElement('span');
+        tag.className = 'tag w'; tag.textContent = '✗ Your Answer'; el.appendChild(tag);
+      }
+    });
+
+    // Show explanation
+    const exEl = document.getElementById('ex' + i);
+    if (exEl && q.explanation) exEl.classList.add('show');
+
+    // Colour the card border
+    if (card) {
+      card.classList.add((ans[i] || '') === correctKey ? 'all-correct' : 'has-wrong');
+    }
+  });
+
+  // Hide submit bar
+  document.getElementById('submit-bar').style.display = 'none';
+
+  // Show score banner
+  const banner = document.getElementById('score-banner');
+  const pctEl  = document.getElementById('sb-pct');
+  pctEl.textContent = pct + '%';
+  pctEl.className   = 'sb-pct ' + (pct >= 70 ? 'hi' : pct >= 40 ? 'mi' : 'lo');
+  document.getElementById('sb-frac').textContent = correct + ' / ' + total + ' correct';
+  document.getElementById('sb-cor').textContent  = '✓ ' + correct + ' Correct';
+  document.getElementById('sb-wrg').textContent  = '✗ ' + (total - correct) + ' Wrong';
+  document.getElementById('sb-msg').textContent  =
+    pct >= 80 ? '🏆 Outstanding performance!' :
+    pct >= 60 ? '🌟 Well done!' :
+    pct >= 40 ? '📚 Keep studying — check explanations below.' :
+                '💪 Keep practicing — review the answers below.';
+  document.getElementById('lb-link').href = location.origin + '/leaderboard.html?id=' + qid;
+  banner.classList.add('show');
+  document.getElementById('pb').style.width = '100%';
+
+  // Scroll to top to show score
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Save to Firestore (non-blocking)
+  addDoc(collection(db, 'attempts'), {
+    quizId: qid, quizTitle: quiz.title, studentName: sname,
+    score: correct, total, percentage: pct, timestamp: serverTimestamp()
+  }).catch(e => console.error('Save failed:', e.message));
+
+  btn.disabled = false;
+  btn.textContent = '✓ Submitted';
+};
+
+// ── HELPERS ───────────────────────────────────────────────────
+function show(n) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('active'));
+  document.getElementById('scr-' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showErr(msg) {
+  document.getElementById('errmsg').textContent = msg;
+  show('err');
+  document.getElementById('hqt').textContent = 'Error';
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

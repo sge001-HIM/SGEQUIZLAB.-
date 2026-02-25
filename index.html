@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SGEQUIZLAB — Elite Academic Quiz Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0e0f0e;--bg2:#111311;--s:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--b:rgba(255,255,255,.08);--e:#10d9a0;--ed:#0a9e75;--g:#f0c040;--gd:#b8923a;--t:#e8ece8;--tm:#7a8a7a;--td:#4a584a;--r:16px;--rs:8px;--fd:'Cinzel',serif;--fb:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:var(--fb);font-weight:300;overflow-x:hidden;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:100;opacity:.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ed);border-radius:3px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:18px 56px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(14,15,14,.95) 0%,transparent 100%);backdrop-filter:blur(12px)}
+.nlogo{font-family:var(--fd);font-size:1.1rem;letter-spacing:.15em;color:var(--g);text-decoration:none;font-weight:600}.nlogo span{color:var(--e)}
+.nlinks{display:flex;gap:28px;align-items:center;list-style:none}
+.nlinks a{color:var(--tm);text-decoration:none;font-size:.84rem;letter-spacing:.04em;transition:color .2s}
+.nlinks a:hover{color:var(--e)}
+.nbtn{background:linear-gradient(135deg,var(--e),var(--ed));color:#06150f !important;padding:8px 20px;border-radius:6px;font-weight:500 !important;transition:box-shadow .2s,transform .15s !important}
+.nbtn:hover{box-shadow:0 0 28px rgba(16,217,160,.35) !important;transform:translateY(-1px)}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:120px 40px 80px;text-align:center}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.16;pointer-events:none;animation:drift 12s ease-in-out infinite alternate}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,var(--e),transparent 70%);top:-100px;left:-130px;animation-delay:0s}
+.orb2{width:380px;height:380px;background:radial-gradient(circle,var(--g),transparent 70%);bottom:-60px;right:-80px;animation-delay:-4s}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(28px,28px) scale(1.07)}}
+.hc{position:relative;z-index:2;max-width:880px}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:var(--s);border:1px solid var(--b);border-radius:100px;padding:6px 18px;font-size:.72rem;color:var(--e);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:26px;animation:fid .8s ease both}
+.hbadge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--e);box-shadow:0 0 8px var(--e);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+h1{font-family:var(--fd);font-size:clamp(2.8rem,7vw,5.2rem);font-weight:900;line-height:1.05;letter-spacing:.04em;margin-bottom:22px;animation:fiu .9s ease .1s both}
+h1 .gold{color:var(--g)}h1 .emerald{color:var(--e)}
+.hsub{font-size:1.05rem;color:var(--tm);max-width:540px;margin:0 auto 44px;line-height:1.7;font-weight:300;animation:fiu .9s ease .2s both}
+.hacts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fiu .9s ease .3s both}
+.bprimary{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--e),#0bbf8c);color:#06150f;font-family:var(--fb);font-size:.93rem;font-weight:500;padding:13px 30px;border-radius:10px;text-decoration:none;letter-spacing:.03em;transition:box-shadow .25s,transform .2s;border:none;cursor:pointer}
+.bprimary:hover{box-shadow:0 0 40px rgba(16,217,160,.4);transform:translateY(-2px)}
+.bsec{display:inline-flex;align-items:center;gap:9px;background:var(--s);color:var(--t);font-family:var(--fb);font-size:.93rem;padding:13px 30px;border-radius:10px;text-decoration:none;border:1px solid var(--b);transition:all .2s}
+.bsec:hover{background:var(--s2);transform:translateY(-2px)}
+@keyframes fid{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fiu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.sbar{padding:38px 56px;border-top:1px solid var(--b);border-bottom:1px solid var(--b);display:flex;justify-content:center;gap:72px;flex-wrap:wrap;background:var(--s)}
+.sitem{text-align:center}
+.snum{font-family:var(--fd);font-size:1.9rem;font-weight:600;color:var(--g);display:block;letter-spacing:.05em}
+.slbl{font-size:.75rem;color:var(--tm);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+
+.features{padding:96px 56px;max-width:1200px;margin:0 auto}
+.sh{text-align:center;margin-bottom:60px}
+.slabel{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--e);font-weight:500;margin-bottom:10px}
+.stitle{font-family:var(--fd);font-size:clamp(1.5rem,3vw,2.2rem);font-weight:600;letter-spacing:.04em}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px}
+.fc{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:34px 30px;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.fc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(16,217,160,.04),transparent);opacity:0;transition:opacity .3s}
+.fc:hover{transform:translateY(-4px);border-color:rgba(16,217,160,.3);box-shadow:0 8px 48px rgba(16,217,160,.07)}
+.fc:hover::before{opacity:1}
+.ficon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,rgba(16,217,160,.14),rgba(16,217,160,.04));border:1px solid rgba(16,217,160,.18);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:18px}
+.fc.ga .ficon{background:linear-gradient(135deg,rgba(240,192,64,.14),rgba(240,192,64,.04));border-color:rgba(240,192,64,.18)}
+.ftitle{font-family:var(--fd);font-size:.93rem;font-weight:600;letter-spacing:.05em;margin-bottom:9px}
+.fdesc{font-size:.85rem;color:var(--tm);line-height:1.65}
+
+.hiw{padding:76px 56px;background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
+.steps{max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:36px;text-align:center}
+.snum2{font-family:var(--fd);font-size:2.8rem;font-weight:900;color:var(--bg);-webkit-text-stroke:1px var(--ed);opacity:.4;line-height:1;margin-bottom:10px}
+.steptitle{font-size:.92rem;font-weight:500;margin-bottom:7px}
+.stepdesc{font-size:.8rem;color:var(--tm);line-height:1.6}
+
+.cta{padding:110px 56px;text-align:center;position:relative;overflow:hidden}
+.cta .orb{position:absolute;width:560px;height:560px;background:radial-gradient(circle,rgba(240,192,64,.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);animation:none}
+.ctatitle{font-family:var(--fd);font-size:clamp(1.8rem,4vw,3rem);font-weight:600;letter-spacing:.05em;margin-bottom:18px;position:relative;z-index:2}
+.ctatitle span{color:var(--g)}
+.ctasub{color:var(--tm);margin-bottom:38px;font-size:.97rem;position:relative;z-index:2}
+.cta .hacts{position:relative;z-index:2}
+
+footer{border-top:1px solid var(--b);padding:28px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.fbrand{font-family:var(--fd);font-size:.88rem;letter-spacing:.1em;color:var(--td)}.fbrand span{color:var(--g)}
+.fcopy{font-size:.76rem;color:var(--td)}
+
+@media(max-width:768px){nav{padding:14px 20px}.nlinks{display:none}.hero{padding:100px 20px 60px}.sbar{padding:28px 20px;gap:28px}.features,.hiw,.cta{padding:60px 20px}footer{padding:20px;flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nlogo">SGE<span>QUIZ</span>LAB</a>
+  <ul class="nlinks">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="admin.html" class="nbtn">Admin Portal</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="hc">
+    <div class="hbadge">✦ Academic Excellence Platform</div>
+    <h1><span class="gold">SGEQUIZ</span><br/><span class="emerald">LAB</span></h1>
+    <p class="hsub">The elite platform for creating, deploying, and analysing academic MCQ quizzes — instant results, live leaderboards, zero friction.</p>
+    <div class="hacts">
+      <a href="admin.html" class="bprimary">⚡ Admin Portal</a>
+      <a href="#how" class="bsec">↓ How It Works</a>
+    </div>
+  </div>
+</section>
+
+<div class="sbar">
+  <div class="sitem"><span class="snum">∞</span><div class="slbl">Quizzes</div></div>
+  <div class="sitem"><span class="snum">Real-time</span><div class="slbl">Leaderboard</div></div>
+  <div class="sitem"><span class="snum">0ms</span><div class="slbl">Auth Delay</div></div>
+  <div class="sitem"><span class="snum">100%</span><div class="slbl">Firestore Backed</div></div>
+</div>
+
+<section class="features" id="features">
+  <div class="sh"><div class="slabel">Why SGEQUIZLAB</div><h2 class="stitle">Purpose-Built for Academics</h2></div>
+  <div class="fgrid">
+    <div class="fc"><div class="ficon">🧩</div><div class="ftitle">Instant Quiz Creation</div><p class="fdesc">Paste your MCQ block, click Create — parsed, validated and saved to Firestore in seconds.</p></div>
+    <div class="fc ga"><div class="ficon">🔗</div><div class="ftitle">Shareable Direct Links</div><p class="fdesc">Every quiz gets a unique URL. Students tap the link, enter their name, and begin — no login needed.</p></div>
+    <div class="fc"><div class="ficon">🏆</div><div class="ftitle">Live Leaderboard</div><p class="fdesc">Ranked results appear in real time with a podium, scores, percentages and timestamps.</p></div>
+    <div class="fc ga"><div class="ficon">🔐</div><div class="ftitle">Secure Admin Panel</div><p class="fdesc">Firebase-authenticated dashboard. Students never see management UI — routing is strictly enforced.</p></div>
+    <div class="fc"><div class="ficon">📊</div><div class="ftitle">Attempt Analytics</div><p class="fdesc">Track total attempts and scores per quiz at a glance from the admin dashboard.</p></div>
+    <div class="fc ga"><div class="ficon">💡</div><div class="ftitle">Detailed Explanations</div><p class="fdesc">Every question carries an explanation revealed after submission to reinforce learning.</p></div>
+  </div>
+</section>
+
+<section class="hiw" id="how">
+  <div class="sh"><div class="slabel">Workflow</div><h2 class="stitle">Three Steps to Launch</h2></div>
+  <div class="steps">
+    <div><div class="snum2">01</div><div class="steptitle">Admin Creates Quiz</div><p class="stepdesc">Log in, paste MCQ block, click Create. Saved to Firestore instantly.</p></div>
+    <div><div class="snum2">02</div><div class="steptitle">Share the Link</div><p class="stepdesc">Copy the quiz URL and send it to students via any channel.</p></div>
+    <div><div class="snum2">03</div><div class="steptitle">Students Attempt</div><p class="stepdesc">Students enter their name, answer all questions, submit — score and explanations shown immediately.</p></div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="orb"></div>
+  <h2 class="ctatitle">Ready to <span>Elevate</span> Your Assessments?</h2>
+  <p class="ctasub">Access the admin portal and publish your first quiz in under two minutes.</p>
+  <div class="hacts"><a href="admin.html" class="bprimary">⚡ Open Admin Portal</a></div>
+</section>
+
+<footer>
+  <div class="fbrand"><span>SGE</span>QUIZLAB</div>
+  <div class="fcopy">© 2026 SGEQUIZLAB — Powered by SGE</div>
+</footer>
+</body>
+</html>
