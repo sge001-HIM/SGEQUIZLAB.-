@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Dashboard — SGEQUIZLAB</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0e0f0e;--bg2:#111311;--s:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);--b:rgba(255,255,255,.08);--ba:rgba(16,217,160,.25);--e:#10d9a0;--ed:#0a9e75;--g:#f0c040;--gd:#b8923a;--t:#e8ece8;--tm:#7a8a7a;--td:#4a584a;--d:#e05555;--dd:rgba(224,85,85,.12);--r:16px;--rs:8px;--sw:260px;--fd:'Cinzel',serif;--fb:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--t);font-family:var(--fb);font-weight:300}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.6}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ed);border-radius:3px}
+
+/* LOGIN */
+#login-overlay{position:fixed;inset:0;background:var(--bg);z-index:900;display:flex;align-items:center;justify-content:center;padding:24px}
+.lcard{background:var(--s2);border:1px solid var(--b);border-radius:24px;padding:52px 44px;width:100%;max-width:420px;position:relative;overflow:hidden}
+.lcard::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(90deg,transparent,var(--e),transparent)}
+.llogo{font-family:var(--fd);font-size:1.2rem;letter-spacing:.15em;color:var(--g);text-align:center;margin-bottom:5px}.llogo span{color:var(--e)}
+.lsub{text-align:center;color:var(--tm);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:34px}
+.fg{margin-bottom:17px}
+label{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--tm);margin-bottom:7px;font-weight:500}
+input[type=email],input[type=password],input[type=text],textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:var(--rs);padding:12px 14px;color:var(--t);font-family:var(--fb);font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus{border-color:var(--ba);box-shadow:0 0 0 3px rgba(16,217,160,.07)}
+textarea{resize:vertical;min-height:175px;font-size:.83rem;line-height:1.6}
+#lerr{background:var(--dd);border:1px solid rgba(224,85,85,.2);color:var(--d);border-radius:var(--rs);padding:9px 13px;font-size:.79rem;margin-bottom:13px;display:none}
+.lerr{background:var(--dd);border:1px solid rgba(224,85,85,.2);color:var(--d);border-radius:var(--rs);padding:9px 13px;font-size:.79rem;margin-bottom:13px;display:none}
+.lerr.show{display:block}
+.lsuc{background:rgba(16,217,160,.08);border:1px solid rgba(16,217,160,.25);color:var(--e);border-radius:var(--rs);padding:9px 13px;font-size:.79rem;margin-bottom:13px}
+.llink{font-size:.76rem;color:var(--e);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.llink:hover{opacity:.8}
+.ldivider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--td);font-size:.72rem}
+.ldivider::before,.ldivider::after{content:'';flex:1;height:1px;background:var(--b)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:var(--rs);cursor:pointer;font-family:var(--fb);font-size:.87rem;font-weight:500;letter-spacing:.03em;padding:11px 20px;transition:all .2s;outline:none;text-decoration:none}
+.bp{background:linear-gradient(135deg,var(--e),var(--ed));color:#06150f;width:100%;padding:14px}
+.bp:hover{box-shadow:0 0 32px rgba(16,217,160,.35);transform:translateY(-1px)}
+.bp:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.bg{background:var(--s);color:var(--tm);border:1px solid var(--b)}.bg:hover{background:var(--s2);color:var(--t)}
+.bd{background:var(--dd);color:var(--d);border:1px solid rgba(224,85,85,.18)}.bd:hover{background:rgba(224,85,85,.22)}
+.bgo{background:rgba(240,192,64,.1);color:var(--g);border:1px solid rgba(240,192,64,.2)}.bgo:hover{background:rgba(240,192,64,.18)}
+.bsm{padding:6px 12px;font-size:.74rem}
+
+/* DASHBOARD */
+#dashboard{display:none;min-height:100vh;flex-direction:row}
+.sidebar{width:var(--sw);background:var(--bg2);border-right:1px solid var(--b);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:50}
+.sh{padding:24px 20px 17px;border-bottom:1px solid var(--b)}
+.slogo{font-family:var(--fd);font-size:.96rem;letter-spacing:.12em;color:var(--g)}.slogo span{color:var(--e)}
+.srole{font-size:.67rem;color:var(--td);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+.snav{padding:16px 10px;flex:1}
+.ni{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:var(--rs);color:var(--tm);font-size:.83rem;cursor:pointer;transition:all .2s;margin-bottom:2px;user-select:none;text-decoration:none;border-left:2px solid transparent}
+.ni:hover,.ni.active{background:var(--s2);color:var(--t)}
+.ni.active{color:var(--e);border-left-color:var(--e)}
+.nic{font-size:.93rem;width:17px;text-align:center}
+.sf{padding:16px 10px;border-top:1px solid var(--b)}
+.aem{font-size:.7rem;color:var(--td);padding:5px 12px;word-break:break-all;margin-bottom:3px}
+
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{padding:20px 36px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);position:sticky;top:0;z-index:40}
+.tbtitle{font-family:var(--fd);font-size:1.02rem;letter-spacing:.05em}.tbtitle span{color:var(--e)}
+.content{padding:34px 36px}
+
+.panel{display:none}.panel.active{display:block}
+
+/* CREATE */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:1060px}
+@media(max-width:880px){.cgrid{grid-template-columns:1fr}}
+.card{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:28px}
+.ctitle{font-family:var(--fd);font-size:.91rem;letter-spacing:.06em;color:var(--g);margin-bottom:4px}
+.csub{font-size:.77rem;color:var(--tm);margin-bottom:20px;line-height:1.55}
+.fhint{background:rgba(16,217,160,.04);border:1px solid rgba(16,217,160,.1);border-radius:var(--rs);padding:13px;font-size:.75rem;color:var(--tm);font-family:'Courier New',monospace;line-height:1.8;margin-bottom:17px;white-space:pre-wrap}
+.fhint strong{color:var(--e)}
+#pp{background:rgba(16,217,160,.04);border:1px solid rgba(16,217,160,.11);border-radius:var(--rs);padding:12px;font-size:.79rem;margin-top:14px;display:none}
+#pp.show{display:block}
+
+/* QUIZ LIST */
+.lhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.lhdr-title{font-family:var(--fd);font-size:.96rem;letter-spacing:.06em}
+.badge{background:var(--s2);border:1px solid var(--b);border-radius:100px;padding:3px 11px;font-size:.69rem;color:var(--tm);letter-spacing:.05em}
+#qlist{display:flex;flex-direction:column;gap:10px}
+.qi{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:17px 20px;display:flex;align-items:center;gap:13px;transition:border-color .2s,transform .2s;animation:si .3s ease both}
+.qi:hover{border-color:rgba(255,255,255,.11);transform:translateX(2px)}
+@keyframes si{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.qiinfo{flex:1;min-width:0}
+.qiname{font-size:.91rem;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qimeta{font-size:.72rem;color:var(--tm);display:flex;gap:13px;flex-wrap:wrap}
+.mc.e{color:var(--e)}.mc.g{color:var(--g)}
+.qiacts{display:flex;gap:7px;flex-shrink:0;flex-wrap:wrap}
+.empty{text-align:center;padding:52px 20px;color:var(--td)}
+.empty-icon{font-size:2.6rem;margin-bottom:9px;opacity:.3}
+.empty-txt{font-size:.85rem}
+
+/* TOAST */
+#toast{position:fixed;bottom:26px;right:26px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--rs);padding:11px 17px;font-size:.82rem;z-index:998;transform:translateY(14px);opacity:0;transition:all .3s;pointer-events:none;max-width:290px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{border-color:rgba(16,217,160,.4);color:var(--e)}
+#toast.err{border-color:rgba(224,85,85,.4);color:var(--d)}
+
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.1);border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+.bp.loading{pointer-events:none;opacity:.7}
+.bp.loading::after{content:'';display:inline-block;width:13px;height:13px;border:2px solid rgba(6,21,15,.3);border-top-color:#06150f;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;vertical-align:middle}
+.spin-lg{width:28px;height:28px;border-width:3px;border-top-color:var(--e)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONFIRM */
+#cmodal{position:fixed;inset:0;background:rgba(14,15,14,.88);backdrop-filter:blur(5px);z-index:800;display:none;align-items:center;justify-content:center;padding:24px}
+#cmodal.open{display:flex}
+.mcard{background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:36px;max-width:390px;width:100%}
+.mtitle{font-family:var(--fd);font-size:.96rem;letter-spacing:.04em;color:var(--d);margin-bottom:8px}
+.mbody{color:var(--tm);font-size:.85rem;line-height:1.6;margin-bottom:24px}
+.macts{display:flex;gap:10px}
+
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.topbar{padding:15px 18px}.content{padding:18px}}
+</style>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#0e0f0e"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="SGEQuiz"/>
+  <link rel="apple-touch-icon" href="/icon-192.png"/>
+  <script>if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");</script>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div id="login-overlay">
+
+  <!-- LOGIN PANEL -->
+  <div class="lcard" id="panel-login">
+    <div class="llogo">SGE<span>QUIZ</span>LAB</div>
+    <div class="lsub">Admin Portal</div>
+    <div class="lerr" id="lerr"></div>
+    <div class="fg"><label>Email Address</label><input type="email" id="em" placeholder="admin@example.com" autocomplete="email"/></div>
+    <div class="fg">
+      <label>Password</label>
+      <input type="password" id="pw" placeholder="••••••••" autocomplete="current-password"/>
+      <div style="text-align:right;margin-top:6px">
+        <span class="llink" onclick="showAuth('forgot')">Forgot password?</span>
+      </div>
+    </div>
+    <button class="btn bp" id="lbtn" onclick="doLogin()">Sign In to Dashboard</button>
+    <div class="ldivider"><span>or</span></div>
+    <button class="btn bg" style="width:100%" onclick="showAuth('register')">Create Admin Account</button>
+  </div>
+
+  <!-- REGISTER PANEL -->
+  <div class="lcard" id="panel-register" style="display:none">
+    <div class="llogo">SGE<span>QUIZ</span>LAB</div>
+    <div class="lsub">Create Admin Account</div>
+    <div class="lerr" id="rerr"></div>
+    <div class="lsuc" id="rsuc" style="display:none"></div>
+    <div class="fg"><label>Full Name</label><input type="text" id="rname" placeholder="e.g. John Adeyemi" maxlength="60"/></div>
+    <div class="fg"><label>School / Institution</label><input type="text" id="rschool" placeholder="e.g. Government College Lagos" maxlength="80"/></div>
+    <div class="fg"><label>Phone Number</label><input type="tel" id="rphone" placeholder="e.g. 08012345678" maxlength="15"/></div>
+    <div class="fg"><label>Subject You Teach</label><input type="text" id="rsubject" placeholder="e.g. Biology, Mathematics" maxlength="60"/></div>
+    <div class="fg"><label>Email Address</label><input type="email" id="rem" placeholder="you@example.com"/></div>
+    <div class="fg"><label>Password</label><input type="password" id="rpw" placeholder="Min. 6 characters"/></div>
+    <div class="fg"><label>Confirm Password</label><input type="password" id="rpw2" placeholder="Repeat password"/></div>
+    <button class="btn bp" id="rbtn" onclick="doRegister()">Create Account →</button>
+    <div class="ldivider"><span>or</span></div>
+    <button class="btn bg" style="width:100%" onclick="showAuth('login')">← Back to Sign In</button>
+  </div>
+
+  <!-- FORGOT PASSWORD PANEL -->
+  <div class="lcard" id="panel-forgot" style="display:none">
+    <div class="llogo">SGE<span>QUIZ</span>LAB</div>
+    <div class="lsub">Reset Password</div>
+    <div class="lerr" id="ferr"></div>
+    <div class="lsuc" id="fsuc" style="display:none"></div>
+    <p style="font-size:.8rem;color:var(--tm);margin-bottom:18px;line-height:1.6">Enter your email address and we'll send you a link to reset your password.</p>
+    <div class="fg"><label>Email Address</label><input type="email" id="fem" placeholder="you@example.com"/></div>
+    <button class="btn bp" id="fbtn" onclick="doForgot()">Send Reset Link</button>
+    <div class="ldivider"><span>or</span></div>
+    <button class="btn bg" style="width:100%" onclick="showAuth('login')">← Back to Sign In</button>
+  </div>
+
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <aside class="sidebar">
+    <div class="sh">
+      <div class="slogo">SGE<span>QUIZ</span>LAB</div>
+      <div class="srole">Admin Panel</div>
+    </div>
+    <nav class="snav">
+      <div class="ni" id="nav-create" onclick="showPanel('create',this)"><span class="nic">⚡</span> Create Quiz</div>
+      <div class="ni active" id="nav-quizzes" onclick="showPanel('quizzes',this)"><span class="nic">📋</span> My Quizzes</div>
+      <a href="index.html" class="ni"><span class="nic">🏠</span> Home</a>
+    </nav>
+    <div class="sf">
+      <div class="aem" id="aem">—</div>
+      <div class="ni" style="color:var(--d)" onclick="doLogout()"><span class="nic">↩</span> Sign Out</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar"><div class="tbtitle" id="tbtitle">My <span>Quizzes</span></div></div>
+    <div class="content">
+
+      <!-- CREATE PANEL -->
+      <div class="panel" id="panel-create">
+        <div class="cgrid">
+          <div class="card">
+            <div class="ctitle">Create New Quiz</div>
+            <div class="csub">Give your quiz a title then paste your MCQ block below.</div>
+            <div class="fhint"><strong>Required format per question:</strong>
+
+What is the capital of France?
+A. London
+B. Paris
+C. Berlin
+D. Rome
+Answer: B
+Explanation: Paris is the capital of France.
+
+<strong>One blank line between questions.</strong></div>
+            <div class="fg"><label>Quiz Title</label><input type="text" id="qtitle" placeholder="e.g. Biology Chapter 3"/></div>
+            <div class="fg"><label>MCQ Block</label><textarea id="mcqi" placeholder="Paste your questions here..." oninput="livePreview()"></textarea></div>
+            <button class="btn bp" id="cbtn" onclick="createQuiz()">⚡ Create Quiz</button>
+            <div id="create-err" style="display:none;margin-top:12px;background:rgba(224,85,85,.12);border:1px solid rgba(224,85,85,.25);color:#e05555;border-radius:8px;padding:10px 13px;font-size:.8rem;line-height:1.5"></div>
+            <div id="pp"></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Format Guide</div>
+            <div class="csub">Each question block must follow this exact structure.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:.79rem;color:var(--tm);line-height:1.65">
+              <p><span style="color:var(--e)">Line 1:</span> Question text (plain — no number needed)</p>
+              <p><span style="color:var(--e)">Lines 2–5:</span> Options → <code style="color:var(--g)">A. Option text</code></p>
+              <p><span style="color:var(--e)">Line 6:</span> <code style="color:var(--g)">Answer: X</code> where X is A B C or D</p>
+              <p><span style="color:var(--e)">Line 7:</span> <code style="color:var(--g)">Explanation: your text</code> (optional)</p>
+              <p><span style="color:var(--g)">Blank line</span> separates questions</p>
+              <hr style="border:none;border-top:1px solid var(--b);margin:4px 0"/>
+              <p>✦ Explanation is optional per question</p>
+              <p>✦ Labels can be A/B/C/D or a/b/c/d</p>
+              <p>✦ Minimum 2 options, maximum 4</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZZES PANEL -->
+      <div class="panel active" id="panel-quizzes">
+        <div class="lhdr">
+          <div class="lhdr-title">My Quizzes</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="badge" id="qbadge">—</div>
+            <button class="btn bp bsm" onclick="showPanel('create', document.getElementById('nav-create'))">⚡ New Quiz</button>
+          </div>
+        </div>
+        <div id="qlist"><div class="empty"><div class="spin spin-lg"></div></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="cmodal">
+  <div class="mcard">
+    <div class="mtitle">⚠ Delete Quiz</div>
+    <div class="mbody" id="mbody">Are you sure? All attempt data will be permanently removed.</div>
+    <div class="macts">
+      <button class="btn bd" id="myes">Delete</button>
+      <button class="btn bg" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { auth, db } from './firebase.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+let _admin = null;
+let _confirmCb = null;
+
+// ── AUTH ──────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) {
+    _admin = user;
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'flex';
+    document.getElementById('aem').textContent = user.email;
+    loadQuizzes();
+  } else {
+    _admin = null;
+    document.getElementById('login-overlay').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
+
+// ── AUTH PANEL SWITCHER ───────────────────────────────────────
+window.showAuth = (panel) => {
+  document.getElementById('panel-login').style.display    = panel === 'login'    ? 'block' : 'none';
+  document.getElementById('panel-register').style.display = panel === 'register' ? 'block' : 'none';
+  document.getElementById('panel-forgot').style.display   = panel === 'forgot'   ? 'block' : 'none';
+};
+
+// ── LOGIN ─────────────────────────────────────────────────────
+window.doLogin = async () => {
+  const email = document.getElementById('em').value.trim();
+  const pw    = document.getElementById('pw').value;
+  const errEl = document.getElementById('lerr');
+  const btn   = document.getElementById('lbtn');
+  errEl.className = 'lerr';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Signing in…';
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':     'No account with this email.',
+      'auth/wrong-password':     'Incorrect password.',
+      'auth/invalid-credential': 'Invalid email or password.',
+      'auth/too-many-requests':  'Too many attempts. Try later.',
+      'auth/invalid-email':      'Invalid email address.'
+    };
+    errEl.textContent = msgs[e.code] || 'Sign-in failed: ' + e.message;
+    errEl.className = 'lerr show';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign In to Dashboard';
+  }
+};
+
+window.doLogout = () => signOut(auth);
+
+document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
+
+// ── REGISTER ──────────────────────────────────────────────────
+window.doRegister = async () => {
+  const name    = document.getElementById('rname').value.trim();
+  const school  = document.getElementById('rschool').value.trim();
+  const phone   = document.getElementById('rphone').value.trim();
+  const subject = document.getElementById('rsubject').value.trim();
+  const email   = document.getElementById('rem').value.trim();
+  const pw      = document.getElementById('rpw').value;
+  const pw2     = document.getElementById('rpw2').value;
+  const errEl   = document.getElementById('rerr');
+  const sucEl   = document.getElementById('rsuc');
+  const btn     = document.getElementById('rbtn');
+
+  errEl.className = 'lerr'; sucEl.style.display = 'none';
+
+  // Validate
+  if (!name)    { errEl.textContent = 'Please enter your full name.'; errEl.className='lerr show'; return; }
+  if (!school)  { errEl.textContent = 'Please enter your school or institution.'; errEl.className='lerr show'; return; }
+  if (!phone)   { errEl.textContent = 'Please enter your phone number.'; errEl.className='lerr show'; return; }
+  if (!subject) { errEl.textContent = 'Please enter the subject you teach.'; errEl.className='lerr show'; return; }
+  if (!email)   { errEl.textContent = 'Please enter your email address.'; errEl.className='lerr show'; return; }
+  if (pw.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.className='lerr show'; return; }
+  if (pw !== pw2)    { errEl.textContent = 'Passwords do not match.'; errEl.className='lerr show'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Creating account…';
+
+  try {
+    // Create Firebase Auth account
+    const cred = await createUserWithEmailAndPassword(auth, email, pw);
+
+    // Update display name
+    await updateProfile(cred.user, { displayName: name });
+
+    // Save profile to Firestore
+    await setDoc(doc(db, 'admins', cred.user.uid), {
+      name, school, phone, subject, email,
+      role: 'admin',
+      createdAt: serverTimestamp()
+    });
+
+    // Success — they're now logged in automatically
+    sucEl.textContent = '✓ Account created! Welcome, ' + name + '!';
+    sucEl.style.display = 'block';
+
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use': 'An account with this email already exists.',
+      'auth/invalid-email':        'Invalid email address.',
+      'auth/weak-password':        'Password is too weak. Use at least 6 characters.'
+    };
+    errEl.textContent = msgs[e.code] || 'Registration failed: ' + e.message;
+    errEl.className = 'lerr show';
+    btn.disabled = false;
+    btn.textContent = 'Create Account →';
+  }
+};
+
+// ── FORGOT PASSWORD ───────────────────────────────────────────
+window.doForgot = async () => {
+  const email = document.getElementById('fem').value.trim();
+  const errEl = document.getElementById('ferr');
+  const sucEl = document.getElementById('fsuc');
+  const btn   = document.getElementById('fbtn');
+
+  errEl.className = 'lerr'; sucEl.style.display = 'none';
+
+  if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.className='lerr show'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Sending…';
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    sucEl.textContent = '✓ Reset link sent to ' + email + '. Check your inbox (and spam folder).';
+    sucEl.style.display = 'block';
+    errEl.className = 'lerr';
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found': 'No account found with this email.',
+      'auth/invalid-email':  'Invalid email address.'
+    };
+    errEl.textContent = msgs[e.code] || 'Failed: ' + e.message;
+    errEl.className = 'lerr show';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send Reset Link';
+  }
+};
+
+document.getElementById('fem').addEventListener('keydown', e => { if (e.key === 'Enter') window.doForgot(); });
+
+// ── PANEL NAV ─────────────────────────────────────────────────
+window.showPanel = (name, el) => {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  el.classList.add('active');
+  const titles = { quizzes: 'My <span>Quizzes</span>', create: 'Create <span>Quiz</span>' };
+  document.getElementById('tbtitle').innerHTML = titles[name] || name;
+  if (name === 'quizzes') loadQuizzes();
+};
+
+// ── MCQ PARSER ────────────────────────────────────────────────
+function parseMCQ(raw) {
+  const blocks = raw.trim().split(/\n\s*\n+/);
+  const questions = [], errors = [];
+  blocks.forEach((block, idx) => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    const n = idx + 1;
+    if (lines.length < 4) { errors.push(`Q${n}: Too few lines.`); return; }
+    const question = lines[0].replace(/^\d+[\.\)]\s*/, '').trim();
+    const options = {};
+    let answerKey = null, explanation = '';
+    for (let i = 1; i < lines.length; i++) {
+      const om = lines[i].match(/^([A-Da-d])[.)]\s+(.+)/);
+      const am = lines[i].match(/^Answer:\s*([A-Da-d])/i);
+      const em = lines[i].match(/^Explanation:\s*(.+)/i);
+      if (om) options[om[1].toUpperCase()] = om[2].trim();
+      else if (am) answerKey = am[1].toUpperCase();
+      else if (em) explanation = em[1].trim();
+    }
+    if (!question)                     { errors.push(`Q${n}: Missing question text.`); return; }
+    if (Object.keys(options).length < 2){ errors.push(`Q${n}: Need at least 2 options.`); return; }
+    if (!answerKey)                    { errors.push(`Q${n}: Missing Answer: line.`); return; }
+    if (!options[answerKey])           { errors.push(`Q${n}: Answer key "${answerKey}" not in options.`); return; }
+    questions.push({ question, options, answerKey, explanation });
+  });
+  return { questions, errors };
+}
+
+// ── LIVE PREVIEW ──────────────────────────────────────────────
+window.livePreview = () => {
+  const raw = document.getElementById('mcqi').value;
+  const pp  = document.getElementById('pp');
+  if (!raw.trim()) { pp.className = ''; pp.style.display = 'none'; return; }
+  const { questions, errors } = parseMCQ(raw);
+  let html = '';
+  if (questions.length) html += `<span style="color:var(--e)">✓ ${questions.length} question${questions.length > 1 ? 's' : ''} parsed</span>`;
+  if (errors.length)    html += (html ? '<br/>' : '') + `<span style="color:var(--d)">✗ ${errors.join('<br/>✗ ')}</span>`;
+  pp.innerHTML = html;
+  pp.className = 'show';
+  pp.style.display = 'block';
+};
+
+// ── CREATE QUIZ ───────────────────────────────────────────────
+window.createQuiz = async () => {
+  const title = document.getElementById('qtitle').value.trim();
+  const raw   = document.getElementById('mcqi').value.trim();
+  const btn   = document.getElementById('cbtn');
+  const errEl = document.getElementById('create-err');
+
+  // Reset error
+  errEl.style.display = 'none';
+  errEl.textContent = '';
+
+  // Auth guard
+  if (!_admin) {
+    errEl.textContent = 'Not signed in. Please refresh and sign in again.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if (!title) { errEl.textContent = 'Please enter a quiz title.'; errEl.style.display='block'; return; }
+  if (!raw)   { errEl.textContent = 'Please paste your MCQ block.'; errEl.style.display='block'; return; }
+
+  const { questions, errors } = parseMCQ(raw);
+  if (errors.length)    { errEl.textContent = errors[0]; errEl.style.display='block'; return; }
+  if (!questions.length){ errEl.textContent = 'No valid questions found.'; errEl.style.display='block'; return; }
+
+  // Show loading state
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = 'Creating…';
+
+  try {
+    const ref = await addDoc(collection(db, 'quizzes'), {
+      title,
+      questions,
+      createdBy: _admin.uid,
+      createdAt: serverTimestamp()
+    });
+    // Success
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '⚡ Create Quiz';
+    showToast('✓ Quiz created!', 'ok');
+    document.getElementById('qtitle').value = '';
+    document.getElementById('mcqi').value   = '';
+    document.getElementById('pp').style.display = 'none';
+    loadQuizzes();
+  } catch(e) {
+    // Always reset button and show error visibly on page
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '⚡ Create Quiz';
+    errEl.textContent = 'Firebase error: ' + e.message;
+    errEl.style.display = 'block';
+    console.error('createQuiz error:', e);
+  }
+};
+
+// ── LOAD QUIZZES ──────────────────────────────────────────────
+async function loadQuizzes() {
+  const listEl = document.getElementById('qlist');
+  const badge  = document.getElementById('qbadge');
+  listEl.innerHTML = '<div class="empty"><div class="spin spin-lg"></div></div>';
+
+  try {
+    // Load all quizzes — no index required
+    const snap = await getDocs(
+      collection(db, 'quizzes')
+    );
+
+    badge.textContent = snap.size + ' quiz' + (snap.size !== 1 ? 'zes' : '');
+
+    if (snap.empty) {
+      listEl.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">No quizzes yet. Create your first one!</div></div>';
+      return;
+    }
+
+    listEl.innerHTML = '';
+
+    for (const ds of snap.docs) {
+      const data = ds.data();
+      // Count attempts for this quiz
+      const attSnap  = await getDocs(query(collection(db, 'attempts'), where('quizId', '==', ds.id)));
+      const attCount = attSnap.size;
+      const quizUrl  = location.origin + '/quiz.html?id=' + ds.id;
+      const dateStr  = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Now';
+
+      const item = document.createElement('div');
+      item.className = 'qi';
+      item.innerHTML = `
+        <div class="qiinfo" style="cursor:pointer" onclick="window.open('${quizUrl}','_blank')">
+          <div class="qiname">${esc(data.title)}</div>
+          <div class="qimeta">
+            <span class="mc e">⚡ ${data.questions?.length || 0} questions</span>
+            <span class="mc g">👥 ${attCount} attempt${attCount !== 1 ? 's' : ''}</span>
+            <span>${dateStr}</span>
+          </div>
+        </div>
+        <div class="qiacts">
+          <a href="${quizUrl}" target="_blank" class="btn bp bsm">▶ Open</a>
+          <button class="btn bg bsm" onclick="copyLink('${quizUrl}')">🔗 Copy</button>
+          <a href="leaderboard.html?id=${ds.id}" class="btn bgo bsm">🏆 Board</a>
+          <button class="btn bd bsm" onclick="confirmDelete('${ds.id}','${esc(data.title).replace(/'/g, '\\'+'\'')}')">✕</button>
+        </div>`;
+      listEl.appendChild(item);
+    }
+  } catch(e) {
+    listEl.innerHTML = `<div class="empty" style="color:var(--d)">Error loading quizzes:<br/>${e.message}</div>`;
+  }
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+window.copyLink = url => {
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('🔗 Link copied!', 'ok'))
+    .catch(() => showToast('Copy failed — try manually', 'err'));
+};
+
+window.confirmDelete = (id, title) => {
+  document.getElementById('mbody').textContent = `Delete "${title}"? All attempt data will be permanently removed.`;
+  document.getElementById('cmodal').classList.add('open');
+  _confirmCb = () => deleteQuiz(id);
+};
+
+window.closeConfirm = () => {
+  document.getElementById('cmodal').classList.remove('open');
+  _confirmCb = null;
+};
+
+document.getElementById('myes').onclick = () => {
+  if (_confirmCb) _confirmCb();
+  closeConfirm();
+};
+
+async function deleteQuiz(id) {
+  try {
+    await deleteDoc(doc(db, 'quizzes', id));
+    const attSnap = await getDocs(query(collection(db, 'attempts'), where('quizId', '==', id)));
+    await Promise.all(attSnap.docs.map(d => deleteDoc(doc(db, 'attempts', d.id))));
+    showToast('Quiz deleted.', 'ok');
+    loadQuizzes();
+  } catch(e) {
+    showToast('Delete failed: ' + e.message, 'err');
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+window.showToast = (msg, type = '') => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'show ' + type;
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { t.className = ''; }, 3500);
+};
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
